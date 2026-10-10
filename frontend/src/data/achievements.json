@@ -1,0 +1,18 @@
+[
+  { "id": "ekadhikena-purvena", "name": "Ekadhikena Master", "desc": "Master the ending-in-5 squaring sutra.", "icon": "Award", "unlocked": false, "category": "Sutra" },
+  { "id": "nikhilam-subtraction", "name": "Nikhilam Navigator", "desc": "Use base subtraction for fast multiplication.", "icon": "Zap", "unlocked": false, "category": "Sutra" },
+  { "id": "sankalana-vyavakalanabhyam", "name": "Sankalana Solver", "desc": "Balance interchanged equations with ease.", "icon": "BookOpen", "unlocked": false, "category": "Sutra" },
+  { "id": "yavadunam", "name": "Yavadunam Squarer", "desc": "Square numbers near a base instantly.", "icon": "Flame", "unlocked": false, "category": "Sutra" },
+  { "id": "ekanyunena-purvena", "name": "Ekanyunena Runner", "desc": "Multiply by 9s with clean left-right structure.", "icon": "Calendar", "unlocked": false, "category": "Sutra" },
+  { "id": "vyastisamastih", "name": "Vyastisamastih Thinker", "desc": "Break and rebuild expressions quickly.", "icon": "CheckCircle", "unlocked": false, "category": "Sutra" },
+  { "id": "vertically-crosswise", "name": "Crosswise Pilot", "desc": "Apply the universal multiplication pattern.", "icon": "Crown", "unlocked": false, "category": "Sutra" },
+  { "id": "anurupyena", "name": "Anurupyena Adapter", "desc": "Scale sub-base work proportionally.", "icon": "Award", "unlocked": false, "category": "Sutra" },
+  { "id": "puranapuranabhyam", "name": "Completer", "desc": "Finish equations by completing structure.", "icon": "Zap", "unlocked": false, "category": "Sutra" },
+  { "id": "sesanyankena-caramena", "name": "Decimal Decoder", "desc": "Resolve denominators ending in 9.", "icon": "BookOpen", "unlocked": false, "category": "Sutra" },
+  { "id": "sopantyadvayamantyam", "name": "Symmetry Seeker", "desc": "Solve mirrored denominator equations.", "icon": "Flame", "unlocked": false, "category": "Sutra" },
+  { "id": "paravartya-yojayet", "name": "Transpose Tactician", "desc": "Flip signs and progress through division.", "icon": "Calendar", "unlocked": false, "category": "Sutra" },
+  { "id": "sunyam-samyasamuccaye", "name": "Zero Balance Keeper", "desc": "Use zero balance in special symmetries.", "icon": "CheckCircle", "unlocked": false, "category": "Sutra" },
+  { "id": "chalana-kalanabhyam", "name": "Flow Controller", "desc": "Shift values with timed mental motion.", "icon": "Crown", "unlocked": false, "category": "Sutra" },
+  { "id": "gunitasamuccayah", "name": "Aggregator", "desc": "Combine factors and products cleanly.", "icon": "Award", "unlocked": false, "category": "Sutra" },
+  { "id": "gunakasamuccayah", "name": "Multiplier Sage", "desc": "Bring together factor paths and totals.", "icon": "Zap", "unlocked": false, "category": "Sutra" }
+]
