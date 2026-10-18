@@ -112,7 +112,7 @@ const submitAttempt = async ({ userId, sessionId, sequence, answer, responseTime
   await updateMasteryFromAttempt({ userId, techniqueId: question.techniqueId, correct: result.correct, responseTimeMs: safeResponseTime });
   const updated = await PracticeSession.findById(sessionId);
   return {
-    attempt: { id: String(attempt._id), sequence, correct: result.correct, expectedAnswer: result.expectedAnswer, scoreAwarded: attempt.scoreAwarded, solution: result.correct ? undefined : explainQuestion(question, result.expectedAnswer) },
+    attempt: { id: String(attempt._id), sequence, correct: result.correct, scoreAwarded: attempt.scoreAwarded, solution: result.correct ? undefined : explainQuestion(question, result.expectedAnswer) },
     session: cleanSession(updated),
     duplicate: false
   };
@@ -127,11 +127,16 @@ const completeSession = async ({ userId, sessionId, idempotencyKey }) => {
   const averageResponseTimeMs = attempts.length ? attempts.reduce((total, attempt) => total + attempt.responseTimeMs, 0) / attempts.length : 0;
   const difficulty = session.questions.reduce((max, question) => Math.max(max, question.difficulty), 1);
   const xp = calculateSessionXp({ correctCount: attempts.filter((attempt) => attempt.correct).length, answeredCount: attempts.length, difficulty, averageResponseTimeMs });
-  session.status = "completed";
-  session.completedAt = new Date();
-  session.xpAwarded = xp;
-  session.completionIdempotencyKey = idempotencyKey;
-  await session.save();
+  const claimed = await PracticeSession.findOneAndUpdate(
+    { _id: session._id, userId, status: "active" },
+    { $set: { status: "completed", completedAt: new Date(), xpAwarded: xp, completionIdempotencyKey: idempotencyKey } },
+    { new: true }
+  );
+  if (!claimed) {
+    const completed = await PracticeSession.findById(session._id);
+    return { session: cleanSession(completed), rewards: { xpAwarded: completed?.xpAwarded || 0, duplicate: true } };
+  }
+  Object.assign(session, claimed.toObject ? claimed.toObject() : claimed);
   const reward = await awardXp({ userId, amount: xp, sourceType: session.mode === "daily-challenge" ? "daily-challenge" : session.mode === "challenge" ? "challenge" : "practice-session", sourceId: session._id, reason: `${session.mode} session completion`, idempotencyKey: `session:${session._id}` });
   const streak = attempts.length ? await qualifyActivity(userId) : null;
   return { session: cleanSession(session), rewards: { xpAwarded: reward.amount, level: reward.progress?.level, leveledUp: reward.leveledUp, streak: streak?.streak || 0, streakIncreased: Boolean(streak?.increased), duplicate: reward.duplicate } };

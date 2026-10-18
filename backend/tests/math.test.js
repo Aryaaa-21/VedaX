@@ -29,6 +29,19 @@ test("every technique generates cross-validated questions at every difficulty", 
   }
 });
 
+test("randomized regression keeps generator, solver, explanation, and verifier aligned", () => {
+  for (const technique of TECHNIQUES) {
+    for (const difficulty of [1, 2, 3]) {
+      for (let seedIndex = 0; seedIndex < 20; seedIndex += 1) {
+        const question = generateVerifiedQuestion({ techniqueId: technique.id, seed: `property-${technique.id}-${difficulty}-${seedIndex}`, difficulty });
+        assert.equal(question.expectedAnswer, question.solution.finalAnswer);
+        assert.equal(verifyAnswer(question, question.expectedAnswer).correct, true);
+        assert.equal(verifyAnswer(question, "not-a-number").correct, false);
+      }
+    }
+  }
+});
+
 test("question generation is deterministic for a fixed seed", () => {
   const first = createQuestionSet({ techniqueIds: ["nikhilam-subtraction"], count: 10, seed: "stable-seed", difficulty: 2 });
   const second = createQuestionSet({ techniqueIds: ["nikhilam-subtraction"], count: 10, seed: "stable-seed", difficulty: 2 });
