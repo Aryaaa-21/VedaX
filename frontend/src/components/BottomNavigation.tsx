@@ -18,13 +18,13 @@ export default function BottomNavigation() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 h-16 bg-card border-t border-primary/10 flex items-center justify-around px-2 z-40 lg:hidden shadow-[0_-4px_12px_rgba(98,43,20,0.06)] text-foreground">
+    <nav className="fixed bottom-0 left-0 right-0 min-h-16 pb-[env(safe-area-inset-bottom)] bg-card border-t border-primary/10 flex items-center justify-around px-1 sm:px-2 z-40 lg:hidden shadow-[0_-4px_12px_rgba(98,43,20,0.06)] text-foreground">
       {navItems.map((item) => {
         const isActive = pathname === item.path;
         const Icon = item.icon;
 
         return (
-          <Link key={item.path} to={item.path} className="flex-1 flex flex-col items-center justify-center h-full relative">
+          <Link key={item.path} to={item.path} aria-label={item.name} className="min-w-0 flex-1 flex flex-col items-center justify-center min-h-16 h-full relative">
             <div className="flex flex-col items-center justify-center gap-0.5">
               <div
                 className={`p-1 rounded-xl transition-all relative ${
@@ -41,7 +41,7 @@ export default function BottomNavigation() {
                 )}
               </div>
               <span
-                className={`text-[9px] font-bold uppercase tracking-wider ${
+                className={`text-[8px] sm:text-[9px] font-bold uppercase tracking-wider truncate max-w-full ${
                   isActive ? "text-primary font-black" : "text-muted-foreground/80"
                 }`}
               >

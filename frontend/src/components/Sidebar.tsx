@@ -47,7 +47,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="hidden lg:flex flex-col h-screen w-66 fixed left-0 top-0 bg-card border-r border-primary/10 p-5 z-40 text-foreground">
+    <aside className="hidden lg:flex flex-col h-screen w-64 fixed left-0 top-0 bg-card border-r border-primary/10 p-5 z-40 text-foreground">
       {/* Brand Logo / Back to Landing */}
       <Link to="/" className="flex items-center gap-3 mb-6 group cursor-pointer">
         <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-all flex-shrink-0 relative">
@@ -108,7 +108,7 @@ export default function Sidebar() {
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   />
                 )}
-                <Icon className={`w-4.5 h-4.5 ${isActive ? "text-accent" : "text-primary/70"}`} />
+                <Icon className={`w-[18px] h-[18px] ${isActive ? "text-accent" : "text-primary/70"}`} />
                 <span>{item.name}</span>
               </motion.div>
             </Link>

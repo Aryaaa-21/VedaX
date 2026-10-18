@@ -98,6 +98,8 @@
 }
 
 body {
+  margin: 0;
+  min-width: 320px;
   background: rgb(var(--background-rgb));
   color: rgb(var(--foreground-rgb));
   font-family: var(--font-sans);
@@ -179,4 +181,26 @@ body {
 /* Speed up hover effect transitions globally */
 a, button, [role="button"], input, select, textarea, .hover-snappy {
   transition-duration: 85ms !important;
+}
+
+html {
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }

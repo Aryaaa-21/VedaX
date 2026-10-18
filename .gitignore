@@ -25,6 +25,7 @@ frontend/build/
 .DS_Store
 *.pem
 qrcode.png
+.opencode/
 
 # Debug
 npm-debug.log*

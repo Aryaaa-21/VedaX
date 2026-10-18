@@ -21,6 +21,10 @@ export default function Navbar() {
 
   const isLoggedIn = !!authUser || isGuest;
 
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
   const mobileNavItems = [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     { name: "Learn", path: "/learn", icon: BookOpen },
@@ -63,7 +67,7 @@ export default function Navbar() {
         <Link to="/" className="flex items-center gap-2 group cursor-pointer">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-mono font-bold text-lg relative group-hover:scale-105 transition-all">
             <span className="group-hover:opacity-0 transition-opacity">V</span>
-            <ArrowLeft className="w-4.5 h-4.5 absolute inset-0 m-auto opacity-0 group-hover:opacity-100 transition-opacity text-white" />
+            <ArrowLeft className="w-[18px] h-[18px] absolute inset-0 m-auto opacity-0 group-hover:opacity-100 transition-opacity text-white" />
           </div>
           <span className="font-sans text-lg font-black tracking-wider text-primary group-hover:text-primary/80 transition-colors">VedaX</span>
         </Link>
@@ -190,7 +194,7 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", bounce: 0.15 }}
-              className="lg:hidden fixed top-16 left-0 w-64 h-[calc(100vh-64px)] bg-card border-r border-primary/10 p-5 z-40 flex flex-col justify-between overflow-y-auto"
+              className="lg:hidden fixed top-16 left-0 w-[85vw] max-w-64 h-[calc(100vh-4rem)] bg-card border-r border-primary/10 p-5 z-40 flex flex-col justify-between overflow-y-auto"
             >
               <div className="space-y-6">
                 {/* User quick stats info */}

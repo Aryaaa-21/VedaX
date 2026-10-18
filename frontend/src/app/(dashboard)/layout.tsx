@@ -10,7 +10,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans relative">
+    <div className="min-h-screen min-w-0 overflow-x-hidden bg-background text-foreground flex flex-col font-sans relative">
       {/* Subtle Vedic dot/mandala background pattern */}
       <VedicPattern opacity={0.03} type="dots" />
 
@@ -23,8 +23,8 @@ export default function DashboardLayout({
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="flex-grow flex flex-col pt-16 lg:pt-0 lg:pl-66 min-h-screen pb-20 lg:pb-0">
-        <main className="flex-grow px-4 md:px-8 py-8 max-w-7xl mx-auto w-full relative z-10">
+      <div className="flex-grow min-w-0 flex flex-col pt-16 lg:pt-0 lg:pl-64 min-h-screen pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">
+        <main className="flex-grow min-w-0 px-4 sm:px-6 md:px-8 py-6 sm:py-8 max-w-7xl mx-auto w-full relative z-10">
           {children}
         </main>
       </div>
