@@ -2,6 +2,12 @@
 
 VedaX is an educational web application for learning and practicing Vedic Mathematics.
 
+It helps learners practice a stable 16-technique curriculum while keeping mathematical verification and learning rewards on the backend.
+
+## Problem and solution
+
+Client-only educational apps can display incorrect arithmetic or let a modified browser award itself progress. VedaX stores practice questions and learning outcomes on the server, cross-validates generated mathematics, and derives XP, mastery, streaks, and recommendations from verified events.
+
 ## Core features
 
 - **16-Sutra curriculum**: A modular practice library covering the full set of sutras.
@@ -9,6 +15,8 @@ VedaX is an educational web application for learning and practicing Vedic Mathem
 - **Live leaderboard**: Rankings are read from MongoDB and calculated by the backend.
 - **Guest progress**: Guest progress stays on the device until the user signs in.
 - **Audio and haptic feedback**: Optional feedback during practice.
+
+The current frontend remains the approved visual baseline; this release does not redesign it.
 
 ## Architecture
 
@@ -27,7 +35,7 @@ backend/
   tests/                  offline API contract and security tests
 ```
 
-The frontend remains the approved visual baseline. Phase 2 adds the mathematical and learning infrastructure behind it; the existing local gameplay remains compatible until a later migration.
+The frontend remains the approved visual baseline. Phases 2 and 3 add verified mathematical, server-owned, and adaptive learning infrastructure behind it; the existing local gameplay remains compatible until a later migration.
 
 ## Requirements
 
@@ -160,7 +168,17 @@ Errors use a stable shape while preserving the frontend-compatible top-level `me
 
 XP, level, streak, accuracy, speed, completion counts, challenge scores, badges, and learning histories are server-controlled model fields. The existing `/api/user/sync` route remains so the frozen frontend does not break, but it does not copy those fields from client payloads. A future scoring API should award progress from verified practice/challenge events rather than accepting a client snapshot.
 
-The Phase 2 engine and extension workflow are documented in [docs/mathematical-engine.md](docs/mathematical-engine.md).
+The verified engine and extension workflow are documented in [docs/mathematical-engine.md](docs/mathematical-engine.md).
+
+Phase 4 documentation:
+
+- [Architecture](docs/architecture.md)
+- [API reference](docs/api.md)
+- [Adaptive learning](docs/adaptive-learning.md)
+- [Technique contribution guide](docs/adding-a-technique.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security policy](SECURITY.md)
+- [Release checklist](docs/release-checklist.md)
 
 ## Deployment
 
@@ -188,3 +206,11 @@ docker run --rm -p 5000:5000 --env-file backend/.env vedax
 - Helmet, exact CORS allowlisting, JSON body limits, global/API rate limits, auth rate limits, and consistent safe errors are enabled.
 - Leaderboards are sorted from persisted backend fields with deterministic tie-breakers; client-provided guest scores are not ranked.
 - The previous client-side champion/demo email override has been removed. Privilege decisions belong to the backend role field and authorization middleware.
+
+## Contributing and roadmap
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request. Useful contribution areas include new mathematically validated techniques, test coverage, accessibility, documentation, performance measurement, and API integration. The next roadmap items are a deliberate frontend migration to server-owned practice sessions, live MongoDB transaction verification in deployment, and a project-owner decision on licensing.
+
+## License
+
+No `LICENSE` file is currently present. This is a release decision for the project owner; contributors should not assume permission to redistribute or reuse the code until a license is selected and committed.

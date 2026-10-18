@@ -1,0 +1,15 @@
+name: Security vulnerability
+description: Redirect security reports to private disclosure
+title: ""
+labels: [security]
+body:
+  - type: markdown
+    attributes:
+      value: Do not disclose vulnerability details publicly. Please use a private GitHub security advisory or contact the maintainers privately as described in SECURITY.md.
+  - type: checkboxes
+    id: acknowledged
+    attributes:
+      label: Private reporting
+      options:
+        - label: I will report this privately instead of posting exploit details here.
+          required: true

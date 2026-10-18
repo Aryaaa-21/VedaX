@@ -1,0 +1,24 @@
+name: New Vedic technique
+description: Propose a complete, testable mathematical technique
+title: "math: add "
+labels: [math, enhancement]
+body:
+  - type: input
+    id: technique
+    attributes:
+      label: Technique and stable ID
+    validations:
+      required: true
+  - type: textarea
+    id: definition
+    attributes:
+      label: Rule, examples, and educational use
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Conventional mathematical validation cases
+      description: Include expected results and boundary cases.
+    validations:
+      required: true

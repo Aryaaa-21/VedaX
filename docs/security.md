@@ -1,4 +1,4 @@
-# Phase 3 Security Model
+# VedaX Security Model
 
 - Learning and progress endpoints require JWT authentication.
 - User ownership is checked from the token, not a client-provided user ID.
@@ -11,5 +11,7 @@
 - Session counts, response times, difficulty, and reward amounts are bounded.
 - The math engine never evaluates arbitrary code or expressions.
 - The existing `/api/user/sync` compatibility endpoint remains profile-only for server-controlled learning fields.
+- API responses do not expose password hashes, JWT secrets, stored expected answers, or internal question solution data before verification.
+- The global API limiter and stricter authentication limiter are disabled only in `NODE_ENV=test` so offline tests remain deterministic.
 
 Before enabling server scoring across the UI, migrate each local gameplay surface so it no longer awards local XP or streaks for the same session.

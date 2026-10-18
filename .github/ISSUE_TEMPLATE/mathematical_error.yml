@@ -1,0 +1,23 @@
+name: Mathematical error
+description: Report an incorrect question, answer, or explanation
+title: "math bug: "
+labels: [math, bug]
+body:
+  - type: input
+    id: technique
+    attributes:
+      label: Technique and question
+    validations:
+      required: true
+  - type: textarea
+    id: reasoning
+    attributes:
+      label: Expected answer, actual answer, and mathematical reasoning
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps, seed, and difficulty
+    validations:
+      required: true
