@@ -24,6 +24,7 @@ frontend/build/
 # Misc
 .DS_Store
 *.pem
+qrcode.png
 
 # Debug
 npm-debug.log*
