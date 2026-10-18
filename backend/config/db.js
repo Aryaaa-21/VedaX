@@ -1,21 +1,20 @@
 const mongoose = require("mongoose");
+const { log } = require("../utils/logger");
 
 const connectDB = async () => {
   try {
     mongoose.set("bufferCommands", false);
 
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      serverSelectionTimeoutMS: 30000
+      serverSelectionTimeoutMS: 10000,
+      maxPoolSize: 10,
+      family: 4
     });
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    log("info", "MongoDB connected", { host: conn.connection.host });
+    return conn;
   } catch (error) {
-    console.error(`MongoDB Connection Error: ${error.message}`);
-    if (error.reason?.servers) {
-      for (const [server, description] of error.reason.servers.entries()) {
-        console.error(`MongoDB ${server}: ${description.error?.message || description.type}`);
-      }
-    }
-    console.warn("Server is running, but database operations will fail until MongoDB is connected.");
+    log("error", "MongoDB connection failed", { reason: error.message });
+    return null;
   }
 };
 

@@ -2,41 +2,54 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const ActivitySchema = new mongoose.Schema({
-  id: { type: String, required: true },
-  type: { type: String, enum: ["practice", "challenge"], required: true },
-  title: { type: String, required: true },
-  desc: { type: String, required: true },
-  date: { type: String, required: true },
-  xpAwarded: { type: Number, default: 0 }
-});
+  id: { type: String, required: true, maxlength: 100 },
+  type: { type: String, enum: ["practice", "challenge", "daily-challenge", "achievement"], required: true },
+  title: { type: String, required: true, maxlength: 160 },
+  desc: { type: String, required: true, maxlength: 500 },
+  date: { type: String, required: true, maxlength: 80 },
+  xpAwarded: { type: Number, default: 0, min: 0, max: 100000 }
+}, { _id: false });
 
 const BadgeSchema = new mongoose.Schema({
-  id: { type: String, required: true },
+  id: { type: String, required: true, maxlength: 100 },
   unlocked: { type: Boolean, default: false },
-  unlockedAt: { type: Date, default: null }
-});
+  // The existing frontend uses values such as "Today"; keep this field textual.
+  unlockedAt: { type: String, default: null, maxlength: 80 }
+}, { _id: false });
 
 const UserSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-  password: { type: String, required: true },
+  name: { type: String, required: true, trim: true, maxlength: 80 },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
+    maxlength: 254,
+    match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  },
+  password: { type: String, required: true, select: false },
+  role: { type: String, enum: ["user", "admin"], default: "user", index: true },
+  tokenVersion: { type: Number, default: 0, min: 0 },
   joinedDate: { type: Date, default: Date.now },
-  level: { type: Number, default: 1 },
-  xp: { type: Number, default: 0 },
-  streak: { type: Number, default: 0 },
-  accuracy: { type: Number, default: 0 },
-  badges: { type: Array, default: [] },
-  completedTechniques: { type: Array, default: [] },
-  challengeHistory: { type: Array, default: [] },
-  profileImage: { type: String, default: "" },
-  avatar: { type: String, default: "https://lh3.googleusercontent.com/a/default-user" },
-  avgSpeed: { type: Number, default: 0 },
-  completedLessons: { type: Number, default: 0 },
-  challengeHighScore: { type: Number, default: 0 },
-  recentActivities: { type: [ActivitySchema], default: [] }
+  level: { type: Number, default: 1, min: 1, max: 1000 },
+  xp: { type: Number, default: 0, min: 0, max: 100000000 },
+  streak: { type: Number, default: 0, min: 0, max: 100000 },
+  accuracy: { type: Number, default: 0, min: 0, max: 100 },
+  badges: { type: [BadgeSchema], default: [], validate: [(value) => value.length <= 100, "Too many badges"] },
+  completedTechniques: { type: [mongoose.Schema.Types.Mixed], default: [], validate: [(value) => value.length <= 1000, "Too many techniques"] },
+  challengeHistory: { type: [mongoose.Schema.Types.Mixed], default: [], validate: [(value) => value.length <= 1000, "Challenge history is too large"] },
+  profileImage: { type: String, default: "", maxlength: 2048 },
+  avatar: { type: String, default: "https://lh3.googleusercontent.com/a/default-user", maxlength: 2048 },
+  avgSpeed: { type: Number, default: 0, min: 0, max: 100000 },
+  completedLessons: { type: Number, default: 0, min: 0, max: 100000 },
+  challengeHighScore: { type: Number, default: 0, min: 0, max: 100000000 },
+  recentActivities: { type: [ActivitySchema], default: [], validate: [(value) => value.length <= 100, "Too many recent activities"] }
 }, {
   timestamps: true
 });
+
+UserSchema.index({ xp: -1, level: -1, accuracy: -1, challengeHighScore: -1, _id: 1 });
 
 // Hash password before saving
 UserSchema.pre("save", async function (next) {

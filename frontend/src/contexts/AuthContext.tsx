@@ -63,15 +63,6 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
-const CHAMPION_EMAIL = "arya21@gmail.com";
-const CHAMPION_LEVEL = 16;
-const CHAMPION_XP = 4500;
-const CHAMPION_ACCURACY = 100;
-const CHAMPION_AVG_SPEED = 1;
-const CHAMPION_COMPLETED_LESSONS = 16;
-
-const normalizeEmail = (email?: string) => (email || "").trim().toLowerCase();
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const authStore = useAuthStore();
   const [authUser, setAuthUser] = useState<any>(null);
@@ -117,103 +108,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return API_URL;
   };
 
-  const promoteChampionProgress = async (userData: any) => {
-    if (normalizeEmail(userData?.email) !== CHAMPION_EMAIL) {
-      return;
-    }
-
-    const championUser = {
-      name: userData.name || "Mathlete",
-      level: CHAMPION_LEVEL,
-      xp: CHAMPION_XP,
-      streak: Math.max(userData.streak || 0, 0),
-      accuracy: CHAMPION_ACCURACY,
-      avgSpeed: CHAMPION_AVG_SPEED,
-      completedLessons: CHAMPION_COMPLETED_LESSONS,
-      avatar: userData.avatar || "https://lh3.googleusercontent.com/a/default-user"
-    };
-
-    const championBadges = useStore.getState().badges.map((badge) => ({
-      ...badge,
-      unlocked: true,
-      unlockedAt: badge.unlockedAt || "Today"
-    }));
-
-    useStore.setState({
-      user: championUser,
-      badges: championBadges
-    });
-
-    const token = localStorage.getItem("vedax_token");
-    if (token) {
-      try {
-        await fetch(`${getApiUrl()}/user/sync`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            name: championUser.name,
-            level: championUser.level,
-            xp: championUser.xp,
-            streak: championUser.streak,
-            accuracy: championUser.accuracy,
-            avgSpeed: championUser.avgSpeed,
-            completedLessons: championUser.completedLessons,
-            avatar: championUser.avatar,
-            recentActivities: useStore.getState().recentActivities,
-            challengeHighScore: useStore.getState().challengeHighScore,
-            badges: championBadges.map((badge) => ({
-              id: badge.id,
-              unlocked: true,
-              unlockedAt: badge.unlockedAt || "Today"
-            }))
-          })
-        });
-      } catch (error) {
-        console.error("Error syncing champion progress:", error);
-      }
-    }
-
-    await syncCurrentUserLeaderboardEntry(
-      championUser.name,
-      championUser.xp,
-      championUser.accuracy,
-      championUser.streak,
-      championUser.avatar
-    );
-  };
-
-  const syncCurrentUserLeaderboardEntry = async (
-    displayName: string,
-    xp: number,
-    accuracy: number,
-    streak: number,
-    avatar: string
-  ) => {
+  const syncCurrentUserLeaderboardEntry = async () => {
     try {
-      const token = localStorage.getItem("vedax_token");
-      const isGuestSaved = localStorage.getItem("guestMode") === "true";
-      
+      const currentUserId = authUser?.uid;
+      if (!currentUserId) return;
+
       let url = `${getApiUrl()}/leaderboard`;
-      if (isGuestSaved) {
-        url += `?guestXp=${xp}&guestName=${encodeURIComponent(displayName)}&guestAccuracy=${accuracy}&guestStreak=${streak}&guestAvatar=${encodeURIComponent(avatar)}`;
-      } else {
-        const currentUserId = authUser?.uid;
-        if (currentUserId) {
-          url += `?userId=${currentUserId}`;
-        }
-      }
+      url += `?userId=${currentUserId}`;
 
       const res = await fetch(url);
       if (res.ok) {
         const data = await res.json();
-        const rank = data.currentUserRank?.rank || 1;
+        if (!data.currentUserRank) return;
+        const rankEntry = data.currentUserRank;
+        const rank = rankEntry.rank;
 
-        const initials = displayName
+        const initials = rankEntry.name
           .split(" ")
-          .map((part) => part[0])
+          .map((part: string) => part[0])
           .join("")
           .substring(0, 2)
           .toUpperCase() || "M";
@@ -223,12 +135,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             ...state.leaderboard.filter((entry) => !entry.isCurrentUser),
             {
               rank: rank,
-              name: displayName,
+              name: rankEntry.name,
               initials,
-              avatar,
-              accuracy,
-              xp,
-              streak,
+              avatar: rankEntry.avatar,
+              accuracy: rankEntry.accuracy,
+              xp: rankEntry.xp,
+              streak: rankEntry.streak,
               isCurrentUser: true
             }
           ]
@@ -342,13 +254,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       useStore.setState({ badges: updatedBadges });
     }
 
-    await syncCurrentUserLeaderboardEntry(
-      finalUserStats.name,
-      finalUserStats.xp,
-      finalUserStats.accuracy,
-      finalUserStats.streak,
-      finalUserStats.avatar
-    );
+    await syncCurrentUserLeaderboardEntry();
   };
 
   useEffect(() => {
@@ -433,15 +339,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               useStore.setState({ badges: updatedBadges });
             }
 
-            await syncCurrentUserLeaderboardEntry(
-              data.name,
-              data.xp,
-              data.accuracy,
-              data.streak,
-              data.avatar || "https://lh3.googleusercontent.com/a/default-user"
-            );
-
-            await promoteChampionProgress(data);
+            await syncCurrentUserLeaderboardEntry();
 
             if (isAuthRoute(pathname)) {
               navigate("/dashboard");
@@ -490,7 +388,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setAuthUser(profile);
 
       await mergeGuestDataAndSync(token, user);
-      await promoteChampionProgress(user);
       navigate("/dashboard");
     } catch (error) {
       setLoading(false);
@@ -517,7 +414,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setAuthUser(profile);
 
       await mergeGuestDataAndSync(token, user);
-      await promoteChampionProgress(user);
       navigate("/dashboard");
     } catch (error) {
       setLoading(false);

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useStore } from "@/store/useStore";
 import {
   Trophy,
   Search,
@@ -26,20 +25,10 @@ export default function LeaderboardPage() {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const isGuestSaved = typeof window !== "undefined" && localStorage.getItem("guestMode") === "true";
-        const token = typeof window !== "undefined" ? localStorage.getItem("vedax_token") : null;
-        
         let url = `${API_URL}/leaderboard`;
-        
-        if (isGuestSaved) {
-          const guestUserStore = useStore.getState().user;
-          const guestXp = guestUserStore.xp || 0;
-          url += `?guestXp=${guestXp}&guestName=${encodeURIComponent(guestUserStore.name || "Guest Mathlete")}&guestAccuracy=${guestUserStore.accuracy || 0}&guestStreak=${guestUserStore.streak || 0}&guestAvatar=${encodeURIComponent(guestUserStore.avatar || "")}`;
-        } else if (token) {
-          const currentUserId = authUser?.uid;
-          if (currentUserId) {
-            url += `?userId=${currentUserId}`;
-          }
+        const currentUserId = authUser?.uid;
+        if (currentUserId) {
+          url += `?userId=${currentUserId}`;
         }
 
         const res = await fetch(url);
@@ -68,7 +57,7 @@ export default function LeaderboardPage() {
         });
 
         if (data.currentUserRank) {
-          const userInTop20 = fetchedUsers.some(u => u.isCurrentUser || (isGuestSaved && u.name === "Guest Mathlete"));
+          const userInTop20 = fetchedUsers.some(u => u.isCurrentUser);
           if (!userInTop20) {
             const userRank = data.currentUserRank.rank;
             const initials = data.currentUserRank.name
