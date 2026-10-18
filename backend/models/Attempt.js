@@ -5,6 +5,8 @@ const AttemptSchema = new mongoose.Schema({
   sessionId: { type: mongoose.Schema.Types.ObjectId, ref: "PracticeSession", required: true },
   questionId: { type: String, required: true },
   techniqueId: { type: String, required: true, maxlength: 80 },
+  operation: { type: String, required: true, maxlength: 100 },
+  difficulty: { type: Number, required: true, min: 1, max: 3 },
   sequence: { type: Number, required: true, min: 0 },
   submittedAnswer: { type: String, required: true, maxlength: 200 },
   normalizedAnswer: { type: String, required: true, maxlength: 200 },

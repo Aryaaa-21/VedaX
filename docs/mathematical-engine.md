@@ -115,6 +115,7 @@ GET  /api/progress/summary
 GET  /api/progress/techniques
 GET  /api/progress/recommendations
 GET  /api/progress/xp-history
+GET  /api/progress/mistakes
 
 GET  /api/challenges/daily
 POST /api/challenges/daily/start
@@ -123,6 +124,8 @@ GET  /api/challenges/history
 ```
 
 Practice attempts are checked against the server-owned question in the session. XP is written through an idempotent XP transaction. Mastery is calculated from attempts, accuracy, recent accuracy, and response time. Streaks require a qualifying completed session and are awarded at most once per UTC day.
+
+Mistake analysis groups incorrect attempts by technique, operation, and difficulty, and also reports average response time and the most recent failure. Recommendations use repeated incorrect attempts as a higher-priority signal.
 
 ## Adding a technique
 

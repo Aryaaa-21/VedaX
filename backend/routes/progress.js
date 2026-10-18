@@ -12,5 +12,6 @@ router.get("/summary", asyncHandler(controller.getSummary));
 router.get("/techniques", validate(progressQuerySchema, "query"), asyncHandler(controller.getTechniques));
 router.get("/recommendations", asyncHandler(controller.getRecommendationsController));
 router.get("/xp-history", validate(progressQuerySchema, "query"), asyncHandler(controller.getXpHistory));
+router.get("/mistakes", validate(progressQuerySchema, "query"), asyncHandler(controller.getMistakes));
 
 module.exports = router;

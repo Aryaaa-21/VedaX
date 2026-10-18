@@ -79,6 +79,8 @@ const submitAttempt = async ({ userId, sessionId, sequence, answer, responseTime
     sessionId,
     questionId: question.id,
     techniqueId: question.techniqueId,
+    operation: question.operation,
+    difficulty: question.difficulty,
     sequence,
     submittedAnswer: String(answer ?? "").slice(0, 200),
     normalizedAnswer: result.normalizedAnswer,
