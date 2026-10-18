@@ -1,7 +1,7 @@
 {
   "framework": null,
-  "installCommand": "node -e \"const fs=require('fs'),cp=require('child_process');if(fs.existsSync('frontend')){cp.execSync('npm --prefix frontend ci',{stdio:'inherit'})}else{cp.execSync('npm ci',{stdio:'inherit'})}\"",
-  "buildCommand": "node -e \"const fs=require('fs'),cp=require('child_process');if(fs.existsSync('frontend')){cp.execSync('npm --prefix frontend run build',{stdio:'inherit'})}else{cp.execSync('npm run build',{stdio:'inherit'})}\"",
+  "installCommand": "node ./scripts/vercel-install.js",
+  "buildCommand": "node ./scripts/vercel-build.js",
   "outputDirectory": "frontend/dist",
   "rewrites": [
     {
