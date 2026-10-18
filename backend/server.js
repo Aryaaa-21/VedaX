@@ -81,6 +81,10 @@ const createApp = () => {
   app.use(apiLimiter);
   app.use("/api/auth", require("./routes/auth"));
   app.use("/api/user", require("./routes/user"));
+  app.use("/api/practice", require("./routes/practice"));
+  app.use("/api/progress", require("./routes/progress"));
+  app.use("/api/techniques", require("./routes/techniques"));
+  app.use("/api/challenges", require("./routes/challenges"));
   app.use("/api/leaderboard", require("./routes/leaderboard"));
 
   app.use(notFoundHandler);

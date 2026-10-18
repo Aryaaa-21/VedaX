@@ -22,10 +22,12 @@ backend/
   routes/                 REST endpoint definitions
   utils/                  tokens, serialization, errors, logging
   validators/             shared Zod request schemas
+  services/math/          deterministic generators, solvers, explanations, verification
+  docs/                   mathematical engine and contributor guidance
   tests/                  offline API contract and security tests
 ```
 
-The frontend remains the approved visual baseline. Phase 1 changes focus on the API, persistence, authentication, security, tests, and developer tooling.
+The frontend remains the approved visual baseline. Phase 2 adds the mathematical and learning infrastructure behind it; the existing local gameplay remains compatible until a later migration.
 
 ## Requirements
 
@@ -130,6 +132,12 @@ npm --prefix backend audit --omit=dev
 | `PUT` | `/api/user/profile` | JWT | Update name and avatar/profile image only |
 | `POST` | `/api/user/sync` | JWT | Compatibility sync; editable profile fields are accepted, learning outcomes are ignored |
 | `GET` | `/api/leaderboard` | Public | Read database-backed rankings; guest score query parameters are not trusted |
+| `GET` | `/api/techniques` | Public | Return the stable Vedic technique catalog |
+| `POST` | `/api/practice/sessions` | JWT | Start a server-owned question session |
+| `POST` | `/api/practice/sessions/:id/attempts` | JWT | Verify an answer against the server-owned question |
+| `POST` | `/api/practice/sessions/:id/complete` | JWT | Complete a session and award idempotent server XP |
+| `GET` | `/api/progress` | JWT | Return summary, technique mastery, and recommendations |
+| `GET` | `/api/challenges/daily` | Public/JWT | Read the UTC server-generated daily challenge |
 
 Errors use a stable shape while preserving the frontend-compatible top-level `message`:
 
@@ -148,6 +156,8 @@ Errors use a stable shape while preserving the frontend-compatible top-level `me
 ### Server-controlled progress
 
 XP, level, streak, accuracy, speed, completion counts, challenge scores, badges, and learning histories are server-controlled model fields. The existing `/api/user/sync` route remains so the frozen frontend does not break, but it does not copy those fields from client payloads. A future scoring API should award progress from verified practice/challenge events rather than accepting a client snapshot.
+
+The Phase 2 engine and extension workflow are documented in [docs/mathematical-engine.md](docs/mathematical-engine.md).
 
 ## Deployment
 

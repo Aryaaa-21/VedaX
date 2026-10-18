@@ -252,3 +252,18 @@ test("logout increments token version so the current JWT can be revoked", { conc
   assert.equal(response.status, 200);
   assert.deepEqual(update.changes, { $inc: { tokenVersion: 1 } });
 });
+
+test("Phase 2 technique catalog is public and preserves stable IDs", { concurrency: false }, async () => {
+  const response = await api.get("/api/techniques");
+  assert.equal(response.status, 200);
+  assert.equal(response.body.techniques.length, 16);
+  assert.equal(response.body.techniques[0].id, "ekadhikena-purvena");
+  assert.equal(response.body.techniques[15].id, "gunakasamuccayah");
+});
+
+test("Phase 2 learning endpoints require authentication", { concurrency: false }, async () => {
+  const practice = await api.post("/api/practice/sessions").send({ mode: "practice", questionCount: 5 });
+  const progress = await api.get("/api/progress");
+  assert.equal(practice.status, 401);
+  assert.equal(progress.status, 401);
+});
