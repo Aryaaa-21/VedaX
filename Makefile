@@ -9,7 +9,7 @@ test:
 	npm --prefix backend test
 
 frontend-typecheck:
-	npm --prefix frontend exec tsc -- --noEmit
+	npm --prefix frontend run typecheck
 
 frontend-build:
 	npm --prefix frontend run build
