@@ -79,15 +79,15 @@ export default function LoginPage() {
               {/* Email / Username field */}
               <div className="space-y-1.5">
                 <label className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest pl-1" htmlFor="email">
-                  Email or Username
+                  Email Address
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/60" />
                   <input
                     id="email"
-                    type="text"
+                    type="email"
                     required
-                    placeholder="DNACoded@vedax.edu"
+                    placeholder="student@vedax.edu"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-background pl-10 pr-4 py-3 rounded-xl border border-primary/10 text-xs outline-none focus:border-primary/30 transition-all font-semibold"

@@ -1,7 +1,7 @@
 export const API_URL =
   (import.meta.env.VITE_API_URL as string | undefined) ||
   (import.meta.env.NEXT_PUBLIC_API_URL as string | undefined) ||
-  "http://localhost:5000/api";
+  "http://localhost:5001/api";
 
 export const TOKEN_KEY = "vedax_token";
 

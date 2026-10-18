@@ -38,17 +38,24 @@ const createApp = () => {
   app.use(helmet());
   app.use(cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      // Allow requests with no origin (like mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
 
-      const isPreview = config.allowPreviewOrigins && config.nodeEnv !== "production" && (
-        /^https:\/\/.*\.vercel\.app$/.test(origin) ||
-        /^https:\/\/.*\.onrender\.com$/.test(origin)
-      );
+      // Check explicit allowed origins list
+      if (allowedOrigins.includes(origin)) return callback(null, true);
 
-      if (isPreview) return callback(null, true);
+      // Always allow any Vercel deployment (production, preview, branch URLs)
+      if (/^https:\/\/.*\.vercel\.app$/.test(origin)) return callback(null, true);
+
+      // Always allow any Render service
+      if (/^https:\/\/.*\.onrender\.com$/.test(origin)) return callback(null, true);
+
+      // Allow localhost on any port for local development
+      if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return callback(null, true);
+
       return callback(new Error("Not allowed by CORS"));
     },
-    credentials: false
+    credentials: true
   }));
 
   app.use(express.json({ limit: config.bodyLimit }));
