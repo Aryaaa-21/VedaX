@@ -32,5 +32,6 @@ const PracticeSessionSchema = new mongoose.Schema({
 
 PracticeSessionSchema.index({ userId: 1, status: 1, createdAt: -1 });
 PracticeSessionSchema.index({ userId: 1, mode: 1, status: 1 });
+PracticeSessionSchema.index({ userId: 1, mode: 1 }, { unique: true, partialFilterExpression: { status: "active" } });
 
 module.exports = mongoose.model("PracticeSession", PracticeSessionSchema);

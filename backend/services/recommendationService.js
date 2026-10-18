@@ -1,5 +1,6 @@
 const UserProgress = require("../models/UserProgress");
 const { TECHNIQUES } = require("./math");
+const { getMasteryState, getPrerequisiteGaps } = require("./adaptiveLearningService");
 
 const getRecommendations = async (userId, limit = 5) => {
   const records = await UserProgress.find({ userId }).sort({ masteryScore: 1, lastAttemptAt: 1 }).limit(50).lean();
@@ -10,7 +11,8 @@ const getRecommendations = async (userId, limit = 5) => {
     const overdue = progress?.nextReviewAt && progress.nextReviewAt <= new Date() ? 0.2 : 0;
     return {
       techniqueId: technique.id,
-      reason: progress ? (progress.consecutiveIncorrect >= 2 ? "Repeated mistakes" : overdue ? "Needs review" : "Build mastery") : "Not practiced yet",
+      reason: progress ? (progress.consecutiveIncorrect >= 2 ? "Repeated mistakes" : overdue ? "Needs review" : getPrerequisiteGaps(technique.id, byTechnique).length ? "Prerequisite gap" : "Build mastery") : "Not practiced yet",
+      state: getMasteryState(progress || {}),
       priority: Math.round(Math.min(1, (100 - score) / 100 + overdue) * 100) / 100,
       suggestedMode: "practice",
       suggestedQuestionCount: score < 40 ? 10 : 5

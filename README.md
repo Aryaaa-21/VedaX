@@ -138,6 +138,9 @@ npm --prefix backend audit --omit=dev
 | `POST` | `/api/practice/sessions/:id/complete` | JWT | Complete a session and award idempotent server XP |
 | `GET` | `/api/progress` | JWT | Return summary, technique mastery, and recommendations |
 | `GET` | `/api/challenges/daily` | Public/JWT | Read the UTC server-generated daily challenge |
+| `GET` | `/api/learning/learner` | JWT | Return the deterministic learner profile |
+| `GET` | `/api/learning/path` | JWT | Return prerequisite-aware next techniques |
+| `GET` | `/api/learning/difficulty/:techniqueId` | JWT | Return bounded adaptive difficulty |
 
 Errors use a stable shape while preserving the frontend-compatible top-level `message`:
 

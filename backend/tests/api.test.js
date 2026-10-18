@@ -267,3 +267,12 @@ test("Phase 2 learning endpoints require authentication", { concurrency: false }
   assert.equal(practice.status, 401);
   assert.equal(progress.status, 401);
 });
+
+test("Phase 3 learner intelligence endpoints require authentication", { concurrency: false }, async () => {
+  const learner = await api.get("/api/learning/learner");
+  const path = await api.get("/api/learning/path");
+  const difficulty = await api.get("/api/learning/difficulty/nikhilam-subtraction");
+  assert.equal(learner.status, 401);
+  assert.equal(path.status, 401);
+  assert.equal(difficulty.status, 401);
+});

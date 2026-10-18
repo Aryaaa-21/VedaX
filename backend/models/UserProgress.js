@@ -11,6 +11,7 @@ const UserProgressSchema = new mongoose.Schema({
   recentAccuracy: { type: Number, default: 0, min: 0, max: 100 },
   masteryScore: { type: Number, default: 0, min: 0, max: 100 },
   masteryLevel: { type: String, enum: ["novice", "developing", "proficient", "mastered"], default: "novice" },
+  learningState: { type: String, enum: ["NOT_STARTED", "LEARNING", "DEVELOPING", "PROFICIENT", "MASTERED", "NEEDS_REVIEW"], default: "NOT_STARTED" },
   lastAttemptAt: { type: Date, default: null },
   lastCorrectAt: { type: Date, default: null },
   nextReviewAt: { type: Date, default: null },

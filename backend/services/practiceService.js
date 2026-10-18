@@ -71,10 +71,17 @@ const submitAttempt = async ({ userId, sessionId, sequence, answer, responseTime
 
   const prior = await Attempt.findOne({ userId, sessionId, sequence });
   if (prior) return { attempt: prior, session: cleanSession(session), duplicate: true };
+  const answeredCount = await Attempt.countDocuments({ userId, sessionId });
+  if (sequence !== answeredCount) throw new AppError("Questions must be answered in sequence", 409, "INVALID_ATTEMPT_ORDER");
   const question = session.questions[sequence];
-  const safeResponseTime = Math.max(0, Math.min(300000, Number(responseTimeMs) || 0));
+  const previousAttempt = await Attempt.findOne({ userId, sessionId }).sort({ submittedAt: -1 }).lean();
+  const serverReference = previousAttempt?.submittedAt || session.startedAt;
+  const serverElapsed = Math.max(0, Date.now() - new Date(serverReference).getTime());
+  const safeResponseTime = Math.max(serverElapsed, Math.min(300000, Number(responseTimeMs) || 0));
   const result = verifyAnswer(question, answer);
-  const attempt = await Attempt.create({
+  let attempt;
+  try {
+    attempt = await Attempt.create({
     userId,
     sessionId,
     questionId: question.id,
@@ -90,7 +97,14 @@ const submitAttempt = async ({ userId, sessionId, sequence, answer, responseTime
     scoreAwarded: calculateAttemptScore({ correct: result.correct, difficulty: question.difficulty, hintUsed }),
     idempotencyKey,
     source: session.mode === "sutra" ? "sutra" : session.mode
-  });
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      const duplicate = await Attempt.findOne({ userId, idempotencyKey });
+      if (duplicate) return { attempt: duplicate, session: cleanSession(session), duplicate: true };
+    }
+    throw error;
+  }
   await PracticeSession.findByIdAndUpdate(sessionId, {
     $inc: { answeredCount: 1, correctCount: result.correct ? 1 : 0, incorrectCount: result.correct ? 0 : 1, score: attempt.scoreAwarded },
     $set: { lastAttemptAt: new Date() }
@@ -109,6 +123,7 @@ const completeSession = async ({ userId, sessionId, idempotencyKey }) => {
   if (session.status === "completed") return { session: cleanSession(session), rewards: { xpAwarded: session.xpAwarded, duplicate: true } };
   if (!idempotencyKey) throw new AppError("idempotencyKey is required", 422, "VALIDATION_ERROR", { idempotencyKey: "Required" });
   const attempts = await Attempt.find({ userId, sessionId }).sort({ sequence: 1 }).lean();
+  if (attempts.length === 0) throw new AppError("At least one valid attempt is required", 422, "SESSION_NOT_COMPLETABLE");
   const averageResponseTimeMs = attempts.length ? attempts.reduce((total, attempt) => total + attempt.responseTimeMs, 0) / attempts.length : 0;
   const difficulty = session.questions.reduce((max, question) => Math.max(max, question.difficulty), 1);
   const xp = calculateSessionXp({ correctCount: attempts.filter((attempt) => attempt.correct).length, answeredCount: attempts.length, difficulty, averageResponseTimeMs });
