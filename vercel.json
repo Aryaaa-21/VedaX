@@ -1,7 +1,7 @@
 {
   "framework": null,
-  "installCommand": "cd frontend && npm ci",
-  "buildCommand": "cd frontend && npm run build",
+  "installCommand": "node -e \"const fs=require('fs'),cp=require('child_process');if(fs.existsSync('frontend')){cp.execSync('npm --prefix frontend ci',{stdio:'inherit'})}else{cp.execSync('npm ci',{stdio:'inherit'})}\"",
+  "buildCommand": "node -e \"const fs=require('fs'),cp=require('child_process');if(fs.existsSync('frontend')){cp.execSync('npm --prefix frontend run build',{stdio:'inherit'})}else{cp.execSync('npm run build',{stdio:'inherit'})}\"",
   "outputDirectory": "frontend/dist",
   "rewrites": [
     {
